@@ -83,7 +83,7 @@ public class CollageService {
     }
 
     public static class CollageRequest {
-        @Schema(example = "Contact.001")
+        @Schema(example = "003Kj00002WDfF8IAL")
         public String contactId;
     }
 
