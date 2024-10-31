@@ -37,7 +37,7 @@ public class CollageService {
     private BookingRepository bookingRepository;
 
     @PostMapping("/generate")
-    public CollageResponse greetings(@RequestBody CollageRequest request, HttpServletRequest httpServletRequest) {
+    public CollageResponse generate(@RequestBody CollageRequest request, HttpServletRequest httpServletRequest) {
 
         // Retrieve bookings for the given contact
         List<Booking> bookings = bookingRepository.findBookingsByContactExternalId(request.contactId);
