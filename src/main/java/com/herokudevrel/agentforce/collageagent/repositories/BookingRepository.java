@@ -12,6 +12,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "JOIN FETCH b.contact c " +
             "JOIN FETCH b.session s " +
             "JOIN FETCH s.experience e " +
-            "WHERE c.sfid = :id")
+            "WHERE c.sfid = :id or c.externalId = :id")
     List<Booking> findBookingsByContactExternalId(@Param("id") String externalId);
 }
