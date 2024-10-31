@@ -39,6 +39,8 @@ public class CollageService {
     @PostMapping("/generate")
     public CollageResponse generate(@RequestBody CollageRequest request, HttpServletRequest httpServletRequest) {
 
+        logger.info("Received contact Id " + request.contactId);
+
         // Retrieve bookings for the given contact
         List<Booking> bookings = bookingRepository.findBookingsByContactExternalId(request.contactId);
 
@@ -60,8 +62,7 @@ public class CollageService {
             // Generate a simple collage of the experiences
             BufferedImage collage = createCollage(urls, 10, 20);
             ImageIO.write(collage, "jpg", outputFile);
-            System.out.println("File saved at: " + outputFile.getAbsolutePath());
-            logger.info("Collage created successfully!");
+            logger.info("Collage saved at: " + outputFile.getAbsolutePath());
 
             // Calculate the fully qualified URL to return to the client to allow it to download the image
             String fullUrl = String.format("%s://%s:%d/downloads/%s.jpg",
