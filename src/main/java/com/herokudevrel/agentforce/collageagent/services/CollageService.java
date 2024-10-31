@@ -1,58 +1,96 @@
 package com.herokudevrel.agentforce.collageagent.services;
 
+import com.herokudevrel.agentforce.collageagent.domain.Booking;
+import com.herokudevrel.agentforce.collageagent.domain.Experience;
+import com.herokudevrel.agentforce.collageagent.repositories.BookingRepository;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Tag(name = "Collage API", description = "Generates Collages")
 @RestController
+@RequestMapping("/api/")
 public class CollageService {
 
     private static final Logger logger = LoggerFactory.getLogger(CollageService.class);
 
-    @PostMapping("/generate")
-    public String greetings(@RequestBody CollageRequest request) {
+    @Autowired
+    private BookingRepository bookingRepository;
 
-        List<String> urls = List.of(
-                "https://s3-us-west-2.amazonaws.com/dev-or-devrl-s3-bucket/sample-apps/coral-clouds/sgxvz18thlsctwwqafec.jpg",
-                "https://s3-us-west-2.amazonaws.com/dev-or-devrl-s3-bucket/sample-apps/coral-clouds/sjahfb9mmbzzyogf87fk.jpg",
-                "https://s3-us-west-2.amazonaws.com/dev-or-devrl-s3-bucket/sample-apps/coral-clouds/ugpauqyr6k4ykemyumuu.png",
-                "https://s3-us-west-2.amazonaws.com/dev-or-devrl-s3-bucket/sample-apps/coral-clouds/mukt3fxxtxz6fgzltiv9.png"
-        );
-        int borderSize = 10;
-        int padding = 20;
+    @PostMapping("/generate")
+    public CollageResponse greetings(@RequestBody CollageRequest request, HttpServletRequest httpServletRequest) {
+
+        // Retrieve bookings for the given contact
+        List<Booking> bookings = bookingRepository.findBookingsByContactExternalId(request.contactId);
+
+        // Map reduce the experiences the contact booked by the experience URL (experience picture)
+        Set<String> urls =
+            bookings.stream()
+                    .map(booking -> booking.getSession().getExperience()) // Get the Experience from each Booking
+                    .filter(experience -> experience != null && experience.getPictureUrl() != null) // Filter out null experiences or URLs
+                    .map(Experience::getPictureUrl) // Map to the picture URL
+                    .collect(Collectors.toSet()); // Collect into a Set for uniqueness
 
         try {
-            BufferedImage collage = createCollage(urls, borderSize, padding);
-            ImageIO.write(collage, "jpg", new java.io.File("./collage_output.jpg"));
-            System.out.println("Collage created successfully!");
-        } catch (IOException e) {
-            System.err.println("Failed to create collage: " + e.getMessage());
-        }
 
-        logger.info("Saying hello to user {}", request.name);
-        return """
-            Welcome %s to the Matrix""".formatted(request.name);
+            // Generate a unique filename for the image to download
+            String guid = UUID.randomUUID().toString();
+            String filePath = "./downloads/" + guid + ".jpg";
+            File outputFile = new File(filePath);
+
+            // Generate a simple collage of the experiences
+            BufferedImage collage = createCollage(urls, 10, 20);
+            ImageIO.write(collage, "jpg", outputFile);
+            System.out.println("File saved at: " + outputFile.getAbsolutePath());
+            logger.info("Collage created successfully!");
+
+            // Calculate the fully qualified URL to return to the client to allow it to download the image
+            String fullUrl = String.format("%s://%s:%d/downloads/%s.jpg",
+                    httpServletRequest.getScheme(),
+                    httpServletRequest.getServerName(),
+                    httpServletRequest.getServerPort(),
+                    guid);
+            CollageResponse response = new CollageResponse();
+            response.downloadUrl = fullUrl;
+            return response;
+
+        } catch (IOException e) {
+            logger.error("Failed to create collage: {}", e.getMessage());
+        }
+        CollageResponse response = new CollageResponse();
+        response.downloadUrl = "";
+        return response;
     }
 
     public static class CollageRequest {
-        @Schema(example = "Neo")
-        public String name;
+        @Schema(example = "Contact.001")
+        public String contactId;
     }
 
-    public static BufferedImage createCollage(List<String> imageUrls, int borderSize, int padding) throws IOException {
+    public static class CollageResponse {
+        public String downloadUrl;
+    }
+
+    public static BufferedImage createCollage(Set<String> imageUrls, int borderSize, int padding) throws IOException {
         // Load images from URLs
         List<BufferedImage> images = new ArrayList<>();
         for (String url : imageUrls) {
