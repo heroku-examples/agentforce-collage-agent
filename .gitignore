@@ -34,3 +34,4 @@ build/
 
 ### App ###
 /downloads/*.*
+!downloads/test.jpg
