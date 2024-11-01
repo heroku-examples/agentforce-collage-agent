@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.herokudevrel.agentforce</groupId>
-    <artifactId>collageagent</artifactId>
+    <artifactId>agentforce-collage-agent</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>collageagent</name>
     <description>collageagent</description>
