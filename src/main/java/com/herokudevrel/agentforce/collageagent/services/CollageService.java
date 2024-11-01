@@ -168,7 +168,7 @@ public class CollageService {
         }
 
         // Read the logo from classpath
-        BufferedImage logo = ImageIO.read(ClassLoader.getSystemResource("coralcloudrestorts.png"));
+        BufferedImage logo = ImageIO.read(Thread.currentThread().getContextClassLoader().getResourceAsStream("coralcloudrestorts.png"));
 
         // Set fonts for the quote and the custom message
         Font quoteFont = new Font("Serif", Font.ITALIC, 42);
