@@ -22,9 +22,14 @@ public class DirectoryCleanupTask {
         if (directory.isDirectory()) {
             long currentTime = System.currentTimeMillis();
             for (File file : directory.listFiles()) {
-                if (file.isFile() && (currentTime - file.lastModified() > EXPIRATION_TIME)) {
-                    if (file.delete()) {
-                        logger.info("Deleted old file: {}", file.getName());
+                if (file.isFile()) {
+                    // Skip the test file
+                    if (file.getName().equals("test.png"))
+                        continue;
+                    if (currentTime - file.lastModified() > EXPIRATION_TIME) {
+                        if (file.delete()) {
+                            logger.info("Deleted old file: {}", file.getName());
+                        }
                     }
                 }
             }

@@ -58,17 +58,16 @@ public class CollageService {
             File outputFile = new File(filePath);
 
             // Generate a simple collage of the experiences
-            BufferedImage collage = createCollage(urls, 10, 20, 500, 20, 20, "Each day you made new discoveries and enriched your soul", "Oh my goodness those sunsets!");
+            BufferedImage collage = createCollage(urls, 10, 20, 500, 20, 20, request.resortMessage, request.qoute);
             boolean success = ImageIO.write(collage, "png", outputFile);
             logger.info("Collage " + (success ? "" : "not ") + "saved at: " + outputFile.getAbsolutePath());
 
             // Calculate the fully qualified URL to return to the client to allow it to download the image
-            String fullUrl = String.format("%s://%s:%d/downloads/%s.png",
+            response.downloadUrl = String.format("%s://%s:%d/downloads/%s.png",
                     httpServletRequest.getScheme(),
                     httpServletRequest.getServerName(),
                     httpServletRequest.getServerPort(),
                     guid);
-            response.downloadUrl = fullUrl;
             return response;
 
         } catch (IOException e) {
@@ -79,8 +78,12 @@ public class CollageService {
     }
 
     public static class CollageRequest {
-        @Schema(example = "Contact.001")
+        @Schema(example = "Contact.018")
         public String contactId;
+        @Schema(example = "Oh my goodness those sunsets!")
+        public String qoute;
+        @Schema(example = "Each day you made new discoveries and enriched your soul")
+        public String resortMessage;
     }
 
     public static class CollageResponse {
