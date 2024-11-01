@@ -58,7 +58,7 @@ public class CollageService {
             File outputFile = new File(filePath);
 
             // Generate a simple collage of the experiences
-            BufferedImage collage = createCollage(urls, 10, 20, 500, 20, 20, request.resortMessage, request.qoute);
+            BufferedImage collage = createCollage(urls, 10, 20, 500, 20, 20, request.resortMessage, request.quote);
             boolean success = ImageIO.write(collage, "png", outputFile);
             logger.info("Collage " + (success ? "" : "not ") + "saved at: " + outputFile.getAbsolutePath());
 
@@ -81,7 +81,7 @@ public class CollageService {
         @Schema(example = "Contact.018")
         public String contactId;
         @Schema(example = "Oh my goodness those sunsets!")
-        public String qoute;
+        public String quote;
         @Schema(example = "Each day you made new discoveries and enriched your soul")
         public String resortMessage;
     }
