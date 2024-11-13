@@ -32,6 +32,9 @@ public class CollageService {
     private static final Logger logger = LoggerFactory.getLogger(CollageService.class);
 
     @Autowired
+    private StorageService storageService;
+
+    @Autowired
     private BookingRepository bookingRepository;
 
     @PostMapping("/generate")
@@ -54,13 +57,12 @@ public class CollageService {
 
             // Generate a unique filename for the image to download
             String guid = UUID.randomUUID().toString();
-            String filePath = "./downloads/" + guid + ".png";
-            File outputFile = new File(filePath);
+            String fileName = guid + ".png";
 
-            // Generate a simple collage of the experiences
+            // Generate a simple collage of the experiences and store it in the S3 bucket for later download
             BufferedImage collage = createCollage(urls, 10, 20, 500, 20, 20, request.resortMessage, request.quote);
-            boolean success = ImageIO.write(collage, "png", outputFile);
-            logger.info("Collage " + (success ? "" : "not ") + "saved at: " + outputFile.getAbsolutePath());
+            storageService.saveBufferedImage(collage, "png", fileName);
+            logger.info("Collage saved as: " + fileName);
 
             // Calculate the fully qualified URL to return to the client to allow it to download the image
             response.downloadUrl = String.format("%s://%s:%d/downloads/%s.png",
