@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
@@ -61,11 +60,11 @@ public class CollageService {
 
             // Generate a simple collage of the experiences and store it in the S3 bucket for later download
             BufferedImage collage = createCollage(urls, 10, 20, 500, 20, 20, request.resortMessage, request.quote);
-            storageService.saveBufferedImage(collage, "png", fileName);
+            storageService.save(collage, "png", fileName);
             logger.info("Collage saved as: " + fileName);
 
             // Calculate the fully qualified URL to return to the client to allow it to download the image
-            response.downloadUrl = String.format("%s://%s:%d/downloads/%s.png",
+            response.downloadUrl = String.format("%s://%s:%d/download/%s.png",
                     httpServletRequest.getScheme(),
                     httpServletRequest.getServerName(),
                     httpServletRequest.getServerPort(),
