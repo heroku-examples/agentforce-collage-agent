@@ -1,8 +1,7 @@
 Extending the Coral Cloud Agent with Heroku
 ===========================================
 
-This demo extends the popular Coral Cloud demo by extending the Coral Cloud Agent with the ability to dynamically generate a custom collage of the guests stay. You can watch a short demo video [here](https://drive.google.com/file/d/1L2BjRLBbCSJlohd60oaqo73Iv_O6euhi/view?usp=sharing). Finally, you can also learn more by taking look at our first Agentforce demo [here](https://blog.heroku.com/building-supercharged-agents-heroku-agentforce). Please join Slack channel 
-#folks-building-agent-actions-on-heroku if you want to know more.
+This demo extends the popular Coral Cloud demo by extending the Coral Cloud Agent with the ability to dynamically generate a custom collage of the guests stay. You can watch a short demo video [here](https://drive.google.com/file/d/1L2BjRLBbCSJlohd60oaqo73Iv_O6euhi/view?usp=sharing).
 
 
 ![alt text](downloads/test.png "Collage")
@@ -13,7 +12,7 @@ Deploy Instructions
 - This sample stores generated images for future download in an AWS S3 bucket. Ensure you have created an AWS S3 bucket and setup a policy to permit read write access. The default bucket name in this sample is `coralcloudcollagefiles`
 - Deploy as you would any [Heroku Java application](https://devcenter.heroku.com/articles/getting-started-with-java) using `git push heroku main`
 - Set environment variables `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` locally and/or for Heroku via `heroku config:set` 
-- Configure [Heroku Connect](https://www.heroku.com/connect) to the Saleforce Org you are using for the Coral Cloud sample (the free demo plan will work just fine). Configure mappings to the **Booking**, **Contact**, **Experience** and **Session** objects (all fields).
+- Configure [Heroku Connect](https://www.heroku.com/connect) to the Salesforce Org you are using for the Coral Cloud sample (the free demo plan will work just fine). Configure mappings to the **Booking**, **Contact**, **Experience** and **Session** objects (all fields).
 - Lastly configure a new **Agentforce Action** and add it to the **Coral Cloud Agent** (see instructions below)
 
 Configuring the Agentforce Action
