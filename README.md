@@ -17,4 +17,4 @@ Deploy Instructions
 
 Configuring the Agentforce Action
 ---------------------------------
-- Coming soon
+- Complete [this](https://github.com/heroku-examples/heroku-agentforce-tutorial?tab=readme-ov-file#creating-agentforce-custom-actions-with-heroku) tutoriall to learn how to deploy and configure this action.
